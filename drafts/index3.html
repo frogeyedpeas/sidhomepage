@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Name | Home</title>
+  <style>
+    /* Define light theme variables by default */
+    :root {
+      --bg-color: #f4f4f4;
+      --text-color: #333;
+      --header-bg: #333;
+      --header-text: #fff;
+      --container-bg: #fff;
+      --link-border: #ddd;
+      --gradient: linear-gradient(to right, #ece9e6, #ffffff);
+    }
+    /* Dark theme variables */
+    .dark-theme {
+      --bg-color: #121212;
+      --text-color: #e0e0e0;
+      --header-bg: #1f1f1f;
+      --header-text: #e0e0e0;
+      --container-bg: #1e1e1e;
+      --link-border: #444;
+      --gradient: linear-gradient(to right, #2c3e50, #000000);
+    }
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--gradient);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1em 0;
+      text-align: center;
+      position: relative;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+    }
+    nav ul li {
+      margin: 0 15px;
+    }
+    nav ul li a {
+      color: var(--header-text);
+      text-decoration: none;
+    }
+    /* Theme toggle button */
+    .theme-toggle {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: 1px solid var(--header-text);
+      border-radius: 5px;
+      padding: 5px 10px;
+      color: var(--header-text);
+      cursor: pointer;
+    }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .links, .contact {
+      background: var(--container-bg);
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .link {
+      border-bottom: 1px solid var(--link-border);
+      padding: 10px 0;
+    }
+    .link:last-child {
+      border-bottom: none;
+    }
+    .contact form {
+      display: flex;
+      flex-direction: column;
+    }
+    .contact form input, .contact form textarea {
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    .contact form input[type="submit"] {
+      background: var(--header-bg);
+      color: var(--header-text);
+      border: 0;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 3px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px 0;
+      background: var(--header-bg);
+      color: var(--header-text);
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Your Name</h1>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+    <nav>
+      <ul>
+        <li><a href="#links">Links</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="https://www.linkedin.com/in/yourprofile" target="_blank">LinkedIn</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="container">
+    <section id="links" class="links">
+      <h2>Links</h2>
+      <div class="link">
+        <h3>Project Title 1</h3>
+        <p>A brief description of your project. <a href="https://github.com/yourusername/project1" target="_blank">View on GitHub</a></p>
+      </div>
+      <div class="link">
+        <h3>Project Title 2</h3>
+        <p>A brief description of your project. <a href="https://github.com/yourusername/project2" target="_blank">View on GitHub</a></p>
+      </div>
+      <!-- Add more links as needed -->
+    </section>
+    <section id="contact" class="contact">
+      <h2>Contact Me</h2>
+      <p> I can be reached at cyBpZC5nIGggb3NoYWxAIHlhaG8gbyAuIGMgbyBt which can be decoded with a certain protocol (hint: think "basic" and think 8^2) </p>
+    </section>
+  </div>
+  <footer>
+    <p>&copy; 2025 Your Name. All rights reserved.</p>
+  </footer>
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark-theme');
+    }
+  </script>
+</body>
+</html>

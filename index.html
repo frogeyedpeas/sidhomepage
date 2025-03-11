@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sidharth Ghoshal | Home</title>
+  <style>
+    /* Dark theme variables set as default */
+    :root {
+      --bg-color: #121212;
+      --text-color: #e0e0e0;
+      --header-bg: #1f1f1f;
+      --header-text: #e0e0e0;
+      --container-bg: #1e1e1e;
+      --link-border: #444;
+      --gradient: linear-gradient(to right, #2c3e50, #000000);
+    }
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--gradient);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1em 0;
+      text-align: center;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+    }
+    nav ul li {
+      margin: 0 15px;
+    }
+    nav ul li a {
+      color: var(--header-text);
+      text-decoration: none;
+    }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .about, .links, .contact {
+      background: var(--container-bg);
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .link {
+      border-bottom: 1px solid var(--link-border);
+      padding: 10px 0;
+    }
+    .link:last-child {
+      border-bottom: none;
+    }
+    .contact form {
+      display: flex;
+      flex-direction: column;
+    }
+    .contact form input, .contact form textarea {
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    .contact form input[type="submit"] {
+      background: var(--header-bg);
+      color: var(--header-text);
+      border: 0;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 3px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px 0;
+      background: var(--header-bg);
+      color: var(--header-text);
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sidharth Ghoshal </h1>
+    <nav>
+      <ul>
+        <li><a href="#about">About Me</a></li>
+        <li><a href="#links">Links</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="container">
+    <section id="about" class="about">
+      <h2>About Me</h2>
+      <p>
+        Welcome to the homepage of Sidharth Ghoshal! I'm a mathematics and computer science enthusiast based out of NYC. I'm a jack of all trade and have worked in the range of full-stack software engineering, AI Research, Advertising Forecasting, and Data Science.
+
+ Feel free to explore some of my links below and get in touch if you'd like to collaborate, learn more, or just generally say hello :) 
+      </p>
+    </section>
+    <section id="links" class="links">
+      <h2>Links</h2>
+      <div class="link">
+        <h3> NYC Math</h3>
+        <p>
+          NYC's first math contest open to adults. This is an ongoing project that I would like eventually to turn into a putnam/imo available to adults throughout the world. <a href="https://nycmath.org/" target="_blank">Check it out here: </a>
+        </p>
+      </div>
+      <div class="link">
+        <h3>Stack Exchange</h3>
+        <p>
+          I'm an senior contributor to the stackexchange network. Below are some links to my profiles: 
+<ul>
+    <li> 
+  <a href="https://math.stackexchange.com/users/58294/sidharth-ghoshal?tab=profile" target="_blank"> math.stackexchange.com </a> A Q&amp;A site for mathematicians at all levels. 
+   </li> 
+
+    <li>
+<a href="https://mathoverflow.net/users/46536/sidharth-ghoshal" target="_blank"> mathoverflow.com </a> A Q&amp;A site for research level questions among professional mathematicians.
+    </li>
+
+    <li>
+<a href="https://physics.stackexchange.com/users/22964/sidharth-ghoshal" target+"_blank"> physics.stackexchange.com </a> A Q&amp;A site for physics questions at all levels which I mostly use to explore creative physics ideas. 
+</ul>
+        </p>
+      </div>
+
+    <div class="link">
+        <h3> Conjectory </h3>
+        <p>
+            I made an automated conjecture finder  <a href="https://conjectory.org" target+"_blank"> conjectory.org </a> . This essentially detects whenever a sequence on <a href="https://oeis.org/" target="_blank"> OEIS </a> is strictly contained in another sequence and then renders a graph where the arrow in the graph represents a conjecture. I would like to eventually scale this out as part of something I call the "moonshine project" which would consist of a collection of automated systems for detecting new conjectures that are meaningful to study, the name "moonshine" originating from <a href="https://en.wikipedia.org/wiki/Monstrous_moonshine"> this </a>. 
+        </p>
+      <p>
+
+     </div> 
+      <!-- Add more links as needed -->
+
+
+    </section>
+    <section id="contact" class="contact">
+      <p> I can be reached at cyBpZC5nIGggb3NoYWxAIHlhaG8gbyAuIGMgbyBt which can be decoded with a certain protocol (hint: think "basic" and think 8^2) </p>
+      <p> Feel free also to connect with me on linkedin here <a href="https://www.linkedin.com/in/sidharth-ghoshal/"> here </a>. </p>
+      
+    </section>
+  </div>
+  <footer>
+    <p>&copy; 2025 Sidharth Ghoshal. All rights reserved.</p>
+  </footer>
+</body>
+</html>
+
