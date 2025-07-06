@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cantor Fractal Builder</title>
+  <style>
+    :root {
+      --bg-color: #fff;
+      --text-color: #000;
+      --cell-bg: #eee;
+      --cell-active: #000;
+      --canvas-border: #333;
+      --canvas-bg: #fff;
+    }
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+    .container {
+      max-width: 600px;
+      margin: 1rem auto;
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    #actions {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    #gridContainer {
+      display: grid;
+      gap: 0;
+      margin-bottom: 1rem;
+    }
+    .cell {
+      width: 30px;
+      height: 30px;
+      background: var(--cell-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .cell.active {
+      background: var(--cell-active);
+    }
+    #fractalCanvas {
+      border: 1px solid var(--canvas-border);
+      background-color: var(--canvas-bg);
+      width: 100%;
+      max-width: 600px;
+      aspect-ratio: 1;
+      image-rendering: pixelated;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Cantor Fractal Builder</h2>
+    <div id="controls">
+    <p> Because every other free online box fractal renderer is absolute trash </p>
+    <p> To use, toggle the grid size, click on the cells on the grey box grid immediately below, and finally dial up depth from 0 to whatever you prefer. Warning this is not very efficient so at depth &gt; 4 all bets are off. 
+    </p>
+      <label>
+        Grid size N:
+        <input type="number" id="gridSize" value="3" min="2" style="width:4rem">
+      </label>
+      <button id="initGrid">Init Grid</button>
+      <label>
+        Depth:
+        <input type="range" id="depthSlider" min="0" max="5" value="0">
+        <input type="number" id="depthInput" min="0" max="10" value="0" style="width:3rem">
+      </label>
+    </div>
+
+    <div id="actions">
+      <button id="exportBtn">Export PNG</button>
+    </div>
+
+    <div id="gridContainer"></div>
+    <canvas id="fractalCanvas" width="600" height="600"></canvas>
+    <p id="dimension">Hausdorff dimension: —</p>
+  </div>
+
+  <script>
+    (function(){
+      const gridContainer = document.getElementById('gridContainer');
+      const gridSizeInput = document.getElementById('gridSize');
+      const initGridBtn = document.getElementById('initGrid');
+      const depthSlider = document.getElementById('depthSlider');
+      const depthInput  = document.getElementById('depthInput');
+      const canvas = document.getElementById('fractalCanvas');
+      const ctx = canvas.getContext('2d');
+      const exportBtn = document.getElementById('exportBtn');
+      const dimLabel  = document.getElementById('dimension');
+
+      let N = 3, pattern = [], depth = 0;
+
+      initGridBtn.addEventListener('click', initGrid);
+      gridSizeInput.addEventListener('change', initGrid);
+      depthSlider.addEventListener('input', drawFractal);
+      depthInput.addEventListener('change', () => {
+        let v = parseInt(depthInput.value, 10);
+        if (isNaN(v) || v < 0) v = 0;
+        if (v > +depthInput.max) v = +depthInput.max;
+        depthSlider.value = depthInput.value = v;
+        drawFractal();
+      });
+      exportBtn.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.download = 'cantor_fractal_depth' + depth + '.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+
+      function initGrid() {
+        N = parseInt(gridSizeInput.value, 10) || 3;
+        pattern = Array(N * N).fill(false);
+        gridContainer.innerHTML = '';
+        gridContainer.style.gridTemplateColumns = `repeat(${N}, auto)`;
+        for (let i = 0; i < N * N; i++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.addEventListener('click', () => {
+            pattern[i] = !pattern[i];
+            cell.classList.toggle('active', pattern[i]);
+            drawFractal();
+          });
+          gridContainer.append(cell);
+        }
+        depthSlider.max = depthInput.max = 10;
+        depth = 0;
+        depthSlider.value = depthInput.value = 0;
+        drawFractal();
+        loadFromHash();
+      }
+
+      function drawFractal() {
+        depth = parseInt(depthSlider.value, 10);
+        depthInput.value = depth;
+        const cnt = pattern.filter(x => x).length;
+        if (cnt === 0) {
+          dimLabel.textContent = 'Hausdorff dimension: — (no cells)';
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          return;
+        }
+        const dim = Math.log(cnt) / Math.log(N);
+        dimLabel.textContent = 'Hausdorff dimension: ' + dim.toFixed(4);
+
+        const L = Math.pow(N, depth);
+        const off = document.createElement('canvas');
+        off.width = off.height = L;
+        const octx = off.getContext('2d');
+        octx.fillStyle = '#000';
+        (function recurse(x, y, size, level) {
+          if (level === 0) {
+            octx.fillRect(x, y, size, size);
+            return;
+          }
+          const cs = size / N;
+          for (let r = 0; r < N; r++) {
+            for (let c = 0; c < N; c++) {
+              if (pattern[r * N + c]) recurse(x + c * cs, y + r * cs, cs, level - 1);
+            }
+          }
+        })(0, 0, L, depth);
+
+        canvas.width = canvas.height = L;
+        ctx.imageSmoothingEnabled = false;
+        ctx.clearRect(0, 0, L, L);
+        ctx.drawImage(off, 0, 0, L, L, 0, 0, L, L);
+      }
+
+      function loadFromHash() {
+        try {
+          const hash = location.hash.slice(1);
+          if (!hash) return;
+          const st = JSON.parse(decodeURIComponent(hash));
+          if (st.N && st.pattern && st.depth >= 0) {
+            gridSizeInput.value = st.N;
+            initGrid();
+            st.pattern.forEach((val, i) => {
+              if (val) {
+                pattern[i] = true;
+                gridContainer.children[i].classList.add('active');
+              }
+            });
+            depthSlider.value = depthInput.value = st.depth;
+            drawFractal();
+          }
+        } catch (e) {}
+      }
+
+      initGrid();
+    })();
+  </script>
+</body>
+</html>
