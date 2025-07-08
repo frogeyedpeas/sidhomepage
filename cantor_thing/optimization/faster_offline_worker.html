@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cantor Fractal (Offscreen + Worker)</title>
+  <style>
+    body { font-family: sans-serif; margin:1rem; text-align:center; }
+    canvas { border:1px solid #333; width:100%;max-width:600px; aspect-ratio:1; image-rendering:pixelated; }
+    #gridContainer { display:grid; margin:1rem auto; gap:0; }
+    .cell { width:24px;height:24px;background:#eee; cursor:pointer; }
+    .cell.active { background:#000; }
+    #controls, #actions { display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; }
+  </style>
+</head>
+<body>
+  <h2>OffscreenCanvas + Worker</h2>
+  <div id="controls">
+    <label>N:<input id="gridSize" type="number" min="2" value="3" style="width:3rem"></label>
+    <button id="initGrid">Init</button>
+    <label>Depth:<input id="depth" type="number" min="0" value="0" style="width:3rem"></label>
+  </div>
+  <div id="actions">
+    <button id="export">Export PNG</button>
+  </div>
+  <div id="gridContainer"></div>
+  <canvas id="canvas"></canvas>
+
+  <!-- Load the external worker script -->
+  <script>
+    const worker = new Worker('fractalWorker.js');
+
+    const grid = document.getElementById('gridContainer');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const exportBtn = document.getElementById('export');
+    const initGridBtn = document.getElementById('initGrid');
+    const gridSizeInput = document.getElementById('gridSize');
+    const depthInput = document.getElementById('depth');
+
+    let N = 3, pattern = [], depth = 0;
+
+    function initGrid() {
+      N = parseInt(gridSizeInput.value, 10) || 3;
+      pattern = Array(N * N).fill(false);
+      grid.innerHTML = '';
+      grid.style.gridTemplateColumns = `repeat(${N}, auto)`;
+      for (let i = 0; i < N * N; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.onclick = () => {
+          pattern[i] = !pattern[i];
+          cell.classList.toggle('active', pattern[i]);
+          drawFractal();
+        };
+        grid.append(cell);
+      }
+      depth = 0;
+      depthInput.value = depth;
+      drawFractal();
+    }
+
+    function drawFractal() {
+      depth = parseInt(depthInput.value, 10) || 0;
+      const L = Math.pow(N, depth);
+      canvas.width = canvas.height = L;
+      worker.postMessage({ N, pattern, depth, L });
+    }
+
+    worker.onmessage = ({ data: bitmap }) => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(bitmap, 0, 0);
+      bitmap.close();
+    };
+
+    initGridBtn.onclick = initGrid;
+    gridSizeInput.onchange = initGrid;
+    depthInput.onchange = drawFractal;
+    exportBtn.onclick = () => {
+      const link = document.createElement('a');
+      link.download = `cantor_depth${depth}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    };
+
+    // Initialize on load
+    initGrid();
+  </script>
+</body>
+</html>

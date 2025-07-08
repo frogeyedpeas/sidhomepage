@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cantor Fractal (Offscreen + Worker)</title>
+  <style>
+    body { font-family: sans-serif; margin:1rem; text-align:center; }
+    canvas { border:1px solid #333; width:100%;max-width:600px; aspect-ratio:1; image-rendering:pixelated; }
+    #gridContainer { display:grid; margin:1rem auto; gap:0; }
+    .cell { width:24px;height:24px;background:#eee; cursor:pointer; }
+    .cell.active { background:#000; }
+    #controls, #actions { display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; }
+  </style>
+</head>
+<body>
+  <h2>OffscreenCanvas + Worker</h2>
+  <div id="controls">
+    <label>N:<input id="gridSize" type="number" min="2" value="3" style="width:3rem"></label>
+    <button id="initGrid">Init</button>
+    <label>Depth:<input id="depth" type="number" min="0" value="0" style="width:3rem"></label>
+  </div>
+  <div id="actions">
+    <button id="export">Export PNG</button>
+  </div>
+  <div id="gridContainer"></div>
+  <canvas id="canvas"></canvas>
+  <script>
+    // create worker via Blob URL
+    const wcode = `
+      onmessage = ({data:{N,pattern,depth,L}}) => {
+        const off = new OffscreenCanvas(L,L);
+        const octx = off.getContext('2d');
+        octx.fillStyle = '#000';
+        (function rec(x,y,size,lev){
+          if(!lev){ return octx.fillRect(x,y,size,size); }
+          const cs=size/N;
+          for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(pattern[r*N+c]) rec(x+c*cs,y+r*cs,cs,lev-1);
+        })(0,0,L,depth);
+        off.convertToBlob().then(blob=>createImageBitmap(blob)).then(bitmap=>postMessage(bitmap,[bitmap]));
+      };
+    `;
+    const worker = new Worker(URL.createObjectURL(new Blob([wcode],{type:'text/javascript'})));
+    const grid= document.getElementById('gridContainer');
+    const canvas= document.getElementById('canvas');
+    const ctx= canvas.getContext('2d');
+    let N=3,pattern=[],depth=0;
+    function initGrid(){
+      N=+document.getElementById('gridSize').value;
+      pattern=Array(N*N).fill(false);
+      grid.innerHTML='';
+      grid.style.gridTemplateColumns=`repeat(${N},auto)`;
+      for(let i=0;i<N*N;i++){
+        const d=document.createElement('div');d.className='cell';
+        d.onclick=()=>{pattern[i]=!pattern[i];d.classList.toggle('active',pattern[i]);draw();};
+        grid.append(d);
+      }
+      draw();
+    }
+    function draw(){
+      depth=+document.getElementById('depth').value;
+      const L=Math.pow(N,depth);
+      canvas.width=canvas.height=L;
+      worker.postMessage({N,pattern,depth,L});
+    }
+    worker.onmessage=({data:bitmap})=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0);bitmap.close();};
+    document.getElementById('initGrid').onclick=initGrid;
+    document.getElementById('depth').onchange=draw;
+    document.getElementById('export').onclick=()=>{
+      const a=document.createElement('a');a.download=`cantor_depth${depth}.png`;a.href=canvas.toDataURL();a.click();
+    };
+    initGrid();
+  </script>
+</body>
+</html>
